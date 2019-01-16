@@ -1,0 +1,58 @@
+version: '3'
+
+services:
+  hub:
+    image: selenium/hub
+    ports:
+      - "4444:4444"
+    deploy:
+     mode: global
+    environment:
+     - GRID_BROWSER_TIMEOUT=60000
+     - GRID_TIMEOUT=60000
+     - GRID_MAX_SESSION=50
+     - GRID_MAX_INSTANCES=3
+     - GRID_CLEAN_UP_CYCLE=60000
+     - GRID_UNREGISTER_IF_STILL_DOWN_AFTER=180000
+     - GRID_NEW_SESSION_WAIT_TIMEOUT=60000
+    networks:
+     - selenium_net
+     
+  firefox:
+    image: selenium/node-firefox
+    volumes:
+      - /dev/urandom:/dev/random
+    depends_on:
+      - hub
+    environment:
+      - HUB_PORT_4444_TCP_ADDR=hub
+      - HUB_PORT_4444_TCP_PORT=4444
+      - NODE_MAX_SESSION=1
+    ports:
+      - "5555:4444"
+    deploy:
+      replicas: 1
+    networks:
+      - selenium_net
+
+  chrome:
+    image: selenium/node-chrome
+    volumes:
+      - /dev/urandom:/dev/random
+    depends_on:
+      - hub
+    environment:
+      - HUB_PORT_4444_TCP_ADDR=hub
+      - HUB_PORT_4444_TCP_PORT=4444
+      - NODE_MAX_SESSION=1
+    ports:
+      - "5556:4444"
+    deploy:
+      replicas: 1
+    networks:
+      - selenium_net
+
+networks:
+  selenium_net:
+    driver: overlay
+    
