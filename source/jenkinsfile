@@ -1,0 +1,77 @@
+pipeline {
+    /* Setup environment
+       Options:
+          - agent none
+          - agent any
+          - agent docker {}
+          - agent dockerfile {}
+    */
+    agent any
+
+    /* A section defining tools to auto-install and put on the PATH.
+    This is ignored if agent none is specified */
+    tools {
+        maven 'apache-maven-3.0.1'
+    }
+
+    /* Containing a sequence of one or more stage directives */
+    stages {
+        /* Stage Build */
+        stage('Build') {
+            /* Conditon for below step
+               Options: branch, equals, allOf, anyOf,...
+            */
+            // when {
+            //     branch 'production'
+            // }
+            // Containts list of steps in Build stage
+            steps {
+                echo "Building..."
+                // sh './gradlew clean build'
+            }
+        }
+        /* Stage Test */
+        stage('Test') {
+            steps {
+                echo "Testing...'"
+                // sh 'make test'
+            }
+        }
+        /* Stage Deploy */
+        stage('Deploying....') {
+            steps {
+                echo "Hello Deploy"
+            }
+        }
+    }
+    
+    post {
+        /* Run the steps in the post section regardless of
+        the completion status of the Pipeline’s or stage’s run. */
+        always {
+            echo 'One way or another, I have finished'
+            deleteDir() /* clean up our workspace */
+        }
+        /* Only run the steps in post if the current Pipeline’s or stage’s
+        run has a "success" status, typically denoted by blue or green in the web UI.*/
+        success {
+            echo 'I succeeeded!'
+        }
+        /* Only run the steps in post if the current Pipeline’s or stage’s run
+        has an "unstable" status, usually caused by test failures, code violations, etc.
+        This is typically denoted by yellow in the web UI. */
+        unstable {
+            echo 'I am unstable :/'
+        }
+        /* Only run the steps in post if the current Pipeline’s or stage’s run
+        has a "failed" status, typically denoted by red in the web UI */
+        failure {
+            echo 'I failed :('
+        }
+        /* Only run the steps in post if the current Pipeline’s or stage’s run
+        has a different completion status from its previous run. */
+        changed {
+            echo 'Things were different before...'
+        }
+    }
+}
