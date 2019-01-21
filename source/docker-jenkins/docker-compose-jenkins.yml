@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  jenkins:
+    image: localhost:5000/myjenkin
+    deploy:
+     replicas: 1
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    environment:
+      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./jenkins_home:/var/jenkins_home
+    networks:
+     - jenkins_net
+
+networks:
+  jenkins_net:
+    driver: overlay

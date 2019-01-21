@@ -1,0 +1,18 @@
+FROM jenkinsci/blueocean
+
+# root permission
+USER root
+
+# install maven
+RUN apk update && apk upgrade && apk add maven 
+
+COPY plugins.txt /usr/share/jenkins/ref/
+RUN /usr/local/bin/plugins.sh /usr/share/jenkins/ref/plugins.txt
+ 
+# Setting up environment variables for Jenkins admin user
+ENV JENKINS_USER admin
+ENV JENKINS_PASS admin
+
+# Start-up scripts to set default user 
+COPY default-user.groovy /usr/share/jenkins/ref/init.groovy.d/
+
