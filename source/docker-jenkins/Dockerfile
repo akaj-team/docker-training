@@ -2,8 +2,6 @@ FROM jenkinsci/blueocean
 
 USER root
 
-RUN apk update \
-    && apk upgrade
 # install maven
 RUN apk update && apk upgrade && apk add maven 
 
